@@ -53,7 +53,7 @@ my @required = qw(
   background plainText errorText brightText highlight lowlight linkText
 );
 
-my $theme = Color::Theme->new({ required => \@required });
+my $theme = Color::Theme->new({ required_colors => \@required });
 
 my $pobox_palette = $theme->make_palette(\%pobox_colors);
 

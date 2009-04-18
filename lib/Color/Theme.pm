@@ -1,12 +1,15 @@
 package Color::Theme;
-use Moose;
+use base 'Class::Accessor';
 
-has required_colors => (
-  is       => 'ro',
-  isa      => 'ArrayRef[Str]',
-  default  => sub { [] },
-  init_arg => 'required',
-);
+use Carp ();
+
+__PACKAGE__->mk_ro_accessors(qw(required_colors));
+
+sub new {
+  my ($class, @rest) = @_;
+
+  my $self = $class->SUPER::new(@rest);
+}
 
 sub make_palette {
   my ($self, $input) = @_;
@@ -28,7 +31,8 @@ sub make_palette {
     my %seen;
     my $curr = $key;
     REDIR: while (1) {
-      die "$key refers to missing color $curr" unless exists $input->{$curr};
+      Carp::confess "$key refers to missing color $curr"
+        unless exists $input->{$curr};
       
       if ($output{ $curr }) {
         $output{ $key } = $output{ $curr };
@@ -36,7 +40,7 @@ sub make_palette {
       }
 
       $curr = $input->{ $curr };
-      die "looping at $curr" if $seen{ $curr }++;
+      Carp::confess "looping at $curr" if $seen{ $curr }++;
     }
   }
 
@@ -56,5 +60,4 @@ sub make_minimal_palette {
   return \%return;
 }
 
-no Moose;
 1;
