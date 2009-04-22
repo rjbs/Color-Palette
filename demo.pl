@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Color::Palette;
+use Color::Theme;
 use HTML::Entities;
 use JSON;
 
@@ -52,18 +52,13 @@ my @required = qw(
   background plainText errorText brightText highlight lowlight linkText
 );
 
-my $pobox_palette = Color::Palette->new({
-  required => \@required,
-  colors   => \%pobox_colors,
-});
+my $theme = Color::Theme->new({ required_colors => \@required });
 
-my $listbox_palette = Color::Palette->new({
-  required => \@required,
-  colors   => \%listbox_colors,
-});
+my $pobox_palette   = $theme->make_minimal_palette(\%pobox_colors);
+my $listbox_palette = $theme->make_minimal_palette(\%listbox_colors);
 
-my $pcs = JSON->new->encode($pobox_palette->colors);
-my $lcs = JSON->new->encode($listbox_palette->colors);
+my $pcs = JSON->new->encode($pobox_palette);
+my $lcs = JSON->new->encode($listbox_palette);
 
 my $HTML = <<"HTML";
 <html>
