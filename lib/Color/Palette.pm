@@ -1,4 +1,4 @@
-package Color::Theme;
+package Color::Palette;
 use base 'Class::Accessor';
 
 use Carp ();
