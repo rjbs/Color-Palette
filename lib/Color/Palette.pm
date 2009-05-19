@@ -4,21 +4,17 @@ use Moose;
 use MooseX::Types::Moose qw(Str HashRef ArrayRef);
 use Color::Palette::Types qw(RecursiveColorDict ColorDict Color);
 
-# has _colors => hashref
-# sub color_names
-# sub rgb('name')
 has colors => (
   is   => 'ro',
   isa  => RecursiveColorDict,
-  lazy => 1,
   coerce   => 1,
   required => 1,
-  default  => undef,
 );
 
 has resolved_colors => (
   is   => 'ro',
   isa  => ColorDict,
+  lazy => 1,
   coerce   => 1,
   required => 1,
   builder  => '_build_resolved_colors',
@@ -35,7 +31,7 @@ sub _build_resolved_colors {
     my $value = $input->{ $key };
     next unless ref $value;
 
-    $output{ $key } = [ @$value ];
+    $output{ $key } = $value;
   }
 
   for my $key (keys %$input) {
@@ -47,7 +43,7 @@ sub _build_resolved_colors {
     REDIR: while (1) {
       Carp::confess "$key refers to missing color $curr"
         unless exists $input->{$curr};
-      
+
       if ($output{ $curr }) {
         $output{ $key } = $output{ $curr };
         last REDIR;
@@ -61,9 +57,24 @@ sub _build_resolved_colors {
   return \%output;
 }
 
+sub color {
+  my ($self, $name) = @_;
+  confess("no color named $name")
+    unless my $color = $self->resolved_colors->{ $name };
+
+  return $color;
+}
+
 sub color_names {
   my ($self) = @_;
-  keys %{ $self->_colors };
+  keys %{ $self->colors };
+}
+
+sub hex_triples {
+  my ($self) = @_;
+  my $output = {};
+  $output->{ $_ } = $self->color($_)->hex_triple for $self->color_names;
+  return $output;
 }
 
 sub optimize_for {
@@ -73,7 +84,7 @@ sub optimize_for {
 
   my %new_palette;
   for my $name (@{ $checker->required_colors }) {
-    $new_palette{ $name } = $self->rgba;
+    $new_palette{ $name } = $self->color($name);
   }
 
   (ref $self)->new({

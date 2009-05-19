@@ -56,16 +56,8 @@ my @required = qw(
 
 my $checker = Color::Palette::Checker->new({ required_colors => \@required });
 
-my $pobox_palette = Color::Palette->new({ _colors => \%pobox_colors });
+my $pobox_palette   = Color::Palette->new({ colors => \%pobox_colors });
+my $listbox_palette = Color::Palette->new({ colors => \%listbox_colors });
 
-my $listbox_palette = Color::Palette->new({ _colors => \%listbox_colors });
-
-my $output = {};
-for my $name ($pobox_palette->color_names) {
-  # my $color = $pobox_palette->_optimized_colors->{ $name };
-  my $color = $pobox_palette->_colors->{ $name };
-  $output->{$name} = ref $color ? $color->hex_triple : $color;
-}
-
-diag(JSON->new->encode($output));
-
+diag(JSON->new->encode($pobox_palette->hex_triples));
+diag(JSON->new->encode($pobox_palette->optimize_for($checker)->hex_triples));
