@@ -7,26 +7,27 @@ use Color::Palette::Types qw(RecursiveColorDict ColorDict Color);
 # has _colors => hashref
 # sub color_names
 # sub rgb('name')
-has _colors => (
+has colors => (
   is   => 'ro',
   isa  => RecursiveColorDict,
   lazy => 1,
   coerce   => 1,
-  default  => undef,
   required => 1,
+  default  => undef,
 );
 
-has _optimized_colors => (
+has resolved_colors => (
   is   => 'ro',
   isa  => ColorDict,
+  coerce   => 1,
   required => 1,
-  builder  => '_build_optimized_colors',
+  builder  => '_build_resolved_colors',
 );
 
-sub _build_optimized_colors {
+sub _build_resolved_colors {
   my ($self) = @_;
 
-  my $input = $self->_colors;
+  my $input = $self->colors;
 
   my %output;
 
@@ -35,7 +36,6 @@ sub _build_optimized_colors {
     next unless ref $value;
 
     $output{ $key } = [ @$value ];
-    $output{ $key }[3] = 0 if @{ $output{ $key } } == 3;
   }
 
   for my $key (keys %$input) {
