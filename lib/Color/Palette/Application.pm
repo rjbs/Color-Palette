@@ -1,4 +1,4 @@
-package Color::Palette::Checker;
+package Color::Palette::Application;
 use Moose;
 
 use Color::Palette;
