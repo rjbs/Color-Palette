@@ -1,63 +1,20 @@
-package Color::Palette;
-use base 'Class::Accessor';
+package Color::Palette::Checker;
+use Moose;
 
-use Carp ();
+use Color::Palette;
 
-__PACKAGE__->mk_ro_accessors(qw(required_colors));
+has required_colors => (
+  is  => 'ro',
+  isa => 'ArrayRef[Str]',
+  required => 1,
+);
 
-sub new {
-  my ($class, @rest) = @_;
-
-  my $self = $class->SUPER::new(@rest);
-}
-
-sub make_palette {
-  my ($self, $input) = @_;
-
-  my %output;
-
-  for my $key (keys %$input) {
-    my $value = $input->{ $key };
-    next unless ref $value;
-
-    $output{ $key } = [ @$value ];
-    $output{ $key }[3] = 0 if @{ $output{ $key } } == 3;
-  }
-
-  for my $key (keys %$input) {
-    my $value = $input->{ $key };
-    next if ref $value;
-
-    my %seen;
-    my $curr = $key;
-    REDIR: while (1) {
-      Carp::confess "$key refers to missing color $curr"
-        unless exists $input->{$curr};
-      
-      if ($output{ $curr }) {
-        $output{ $key } = $output{ $curr };
-        last REDIR;
-      }
-
-      $curr = $input->{ $curr };
-      Carp::confess "looping at $curr" if $seen{ $curr }++;
-    }
-  }
-
-  return \%output;
-}
-
-sub make_minimal_palette {
-  my ($self, $input) = @_;
-
-  my $palette = $self->make_palette($input);
-
-  my %return;
+sub check {
+  my ($self, $palette) = @_;
+  
   for my $name (@{ $self->required_colors }) {
-    $return{ $name } = $palette->{ $name };
-  }
-
-  return \%return;
+    confess("missing required color $name") unless $palette->has_color($name);
+  };
 }
 
 1;

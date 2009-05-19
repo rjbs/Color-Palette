@@ -1,18 +1,32 @@
 package Color::Palette;
-use base 'Class::Accessor';
+use Moose;
 
-use Carp ();
+use MooseX::Types::Moose qw(Str HashRef ArrayRef);
+use Color::Palette::Types qw(RecursiveColorDict ColorDict Color);
 
-__PACKAGE__->mk_ro_accessors(qw(required_colors));
+# has _colors => hashref
+# sub color_names
+# sub rgb('name')
+has _colors => (
+  is   => 'ro',
+  isa  => RecursiveColorDict,
+  lazy => 1,
+  coerce   => 1,
+  default  => undef,
+  required => 1,
+);
 
-sub new {
-  my ($class, @rest) = @_;
+has _optimized_colors => (
+  is   => 'ro',
+  isa  => ColorDict,
+  required => 1,
+  builder  => '_build_optimized_colors',
+);
 
-  my $self = $class->SUPER::new(@rest);
-}
+sub _build_optimized_colors {
+  my ($self) = @_;
 
-sub make_palette {
-  my ($self, $input) = @_;
+  my $input = $self->_colors;
 
   my %output;
 
@@ -47,17 +61,24 @@ sub make_palette {
   return \%output;
 }
 
-sub make_minimal_palette {
-  my ($self, $input) = @_;
+sub color_names {
+  my ($self) = @_;
+  keys %{ $self->_colors };
+}
 
-  my $palette = $self->make_palette($input);
+sub optimize_for {
+  my ($self, $checker) = @_;
 
-  my %return;
-  for my $name (@{ $self->required_colors }) {
-    $return{ $name } = $palette->{ $name };
+  my $required_colors = $checker->required_colors;
+
+  my %new_palette;
+  for my $name (@{ $checker->required_colors }) {
+    $new_palette{ $name } = $self->rgba;
   }
 
-  return \%return;
+  (ref $self)->new({
+    colors => \%new_palette,
+  });
 }
 
 1;
