@@ -3,7 +3,6 @@ use warnings;
 
 use Color::Palette;
 use Color::Palette::Schema;
-use JSON;
 use Test::More 'no_plan';
 
 my $pal_schema = Color::Palette::Schema->new({
