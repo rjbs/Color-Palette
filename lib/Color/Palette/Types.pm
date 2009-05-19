@@ -3,6 +3,30 @@ use strict;
 use warnings;
 # ABSTRACT: type constraints for use with Color::Palette
 
+=head1 BEAR WITH ME
+
+I'm not yet sure how best to document a type library.
+
+=head1 TYPES
+
+The following types are defined:
+
+  Color     - a Color::Palette::Color object
+  Palette   - a Color::Palette::Color object
+  ColorName - a valid color name: /\A[a-z][-a-z0-9]*\z/i
+
+  ColorDict - a hash mapping ColorName to Color
+  RecursiveColorDict - a hash mapping ColorName to (Color | ColorName)
+
+  HexColorStr - a string like #000 or #ababab
+  ArrayRGB    - an ArrayRef of three Bytes
+  Byte        - and Int from 0 to 255
+
+Colors can be coerced from ArrayRGB or HexColorStr, and dicts of colors try to
+coerce, too.
+
+=cut
+
 use Color::Palette::Color;
 
 use List::MoreUtils qw(all);
@@ -14,6 +38,7 @@ use MooseX::Types -declare => [ qw(
   RecursiveColorDict
   HexColorStr
   ArrayRGB
+  Byte
 ) ];
 
 use MooseX::Types::Moose qw(Str Int ArrayRef HashRef);
@@ -25,8 +50,9 @@ subtype ColorName, as Str, where { /\A[a-z][-a-z0-9]*\z/i };
 
 subtype HexColorStr, as Str, where { /\A#?(?:[0-9a-f]{3}|[0-9a-f]{6})\z/i };
 
-subtype ArrayRGB, as ArrayRef[Int],
-  where { @$_ == 3 and 3 == (grep { $_ >= 0 and $_ < 256 } @$_) };
+subtype Byte, as Int, where { $_ >= 0 and $_ <= 255 };
+
+subtype ArrayRGB, as ArrayRef[Byte], where { @$_ == 3 };
 
 coerce Color, from ArrayRGB, via {
   Color::Palette::Color->new({
