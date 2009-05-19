@@ -3,13 +3,17 @@ use warnings;
 
 use Color::Palette;
 use Color::Palette::Schema;
-use Test::More 'no_plan';
+use Test::More tests => 7;
 
 my $pal_schema = Color::Palette::Schema->new({
   required_colors => [ qw(
     background plainText errorText brightText highlight lowlight linkText
   ) ]
 });
+
+my $bad_pal = Color::Palette->new({ colors => { blue => '#00f' } });
+eval { $pal_schema->check($bad_pal); };
+like($@, qr/no color named/, "bad palette rejected by schema");
 
 my $pobox_palette   = Color::Palette->new({
   colors => {

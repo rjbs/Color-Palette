@@ -37,11 +37,12 @@ coerce Color, from ArrayRGB, via {
 };
 
 coerce Color, from HexColorStr, via {
+  my $width = 2 / ((length($_)-1) / 3); # 3 -> 2; 6 -> 1;
   my @rgb = /\A#?([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})\z/;
   Color::Palette::Color->new({
-    red   => hex($rgb[1]),
-    green => hex($rgb[2]),
-    blue  => hex($rgb[3]),
+    red   => hex($rgb[1] x $width),
+    green => hex($rgb[2] x $width),
+    blue  => hex($rgb[3] x $width),
   });
 };
 
@@ -54,8 +55,8 @@ coerce ColorDict, from HashRef, via {
   return { map {; $_ => to_Color($input->{$_}) } keys %$_ };
 };
 
-subtype RecursiveColorDict, as HashRef[ Color | Str ], where {
-  all { ref $_ or is_ColorName($_) } keys %$_
+subtype RecursiveColorDict, as HashRef[ Color | ColorName ], where {
+  all { is_ColorName($_) } keys %$_
 };
 
 coerce RecursiveColorDict, from HashRef, via {

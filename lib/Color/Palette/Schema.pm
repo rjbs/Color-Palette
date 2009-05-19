@@ -12,10 +12,10 @@ has required_colors => (
 
 sub check {
   my ($self, $palette) = @_;
-  
-  for my $name (@{ $self->required_colors }) {
-    confess("missing required color $name") unless $palette->has_color($name);
-  };
+
+  # ->color will throw an exception on unknown colors, doing our job for us.
+  # -- rjbs, 2009-05-19
+  $palette->color($_) for @{ $self->required_colors };
 }
 
 1;
