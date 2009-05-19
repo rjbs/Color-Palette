@@ -4,8 +4,11 @@ use warnings;
 
 use Color::Palette::Color;
 
+use List::MoreUtils qw(all);
+
 use MooseX::Types -declare => [ qw(
   Color Palette
+  ColorName
   ColorDict
   RecursiveColorDict
   HexColorStr
@@ -16,6 +19,8 @@ use MooseX::Types::Moose qw(Str Int ArrayRef HashRef);
 
 class_type Color,   { class => 'Color::Palette::Color' };
 class_type Palette, { class => 'Color::Palette' };
+
+subtype ColorName, as Str, where { /\A[a-z][-a-z0-9]*\z/i };
 
 subtype HexColorStr, as Str, where { /\A#?(?:[0-9a-f]{3}|[0-9a-f]{6})\z/i };
 
@@ -39,14 +44,20 @@ coerce Color, from HexColorStr, via {
   });
 };
 
-subtype ColorDict, as HashRef[ Color ];
-coerce  ColorDict, from HashRef, via {
-  my $input = $_;
-  return { map {; $_ => to_Color($input->{$_}) } keys %$input };
+subtype ColorDict, as HashRef[ Color ], where {
+  all { is_ColorName($_) } keys %$_;
 };
 
-subtype RecursiveColorDict, as HashRef[ Color | Str ];
-coerce  RecursiveColorDict, from HashRef, via {
+coerce ColorDict, from HashRef, via {
+  my $input = $_;
+  return { map {; $_ => to_Color($input->{$_}) } keys %$_ };
+};
+
+subtype RecursiveColorDict, as HashRef[ Color | Str ], where {
+  all { ref $_ or is_ColorName($_) } keys %$_
+};
+
+coerce RecursiveColorDict, from HashRef, via {
   my $input = $_;
   my %output;
   for my $name (keys %$input) {
