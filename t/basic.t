@@ -2,11 +2,11 @@ use strict;
 use warnings;
 
 use Color::Palette;
-use Color::Palette::Application;
+use Color::Palette::Schema;
 use JSON;
 use Test::More 'no_plan';
 
-my $pal_app = Color::Palette::Application->new({
+my $pal_schema = Color::Palette::Schema->new({
   required_colors => [ qw(
     background plainText errorText brightText highlight lowlight linkText
   ) ]
@@ -58,7 +58,7 @@ my $listbox_palette = Color::Palette->new({
   },
 });
 
-my $opto_pobox = $pobox_palette->optimize_for($pal_app);
+my $opto_pobox = $pobox_palette->optimize_for($pal_schema);
 
 isa_ok(
   $pobox_palette->color('poboxBlue'),

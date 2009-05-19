@@ -1,5 +1,6 @@
 package Color::Palette;
 use Moose;
+# ABSTRACT: a set of named colors
 
 use MooseX::Types::Moose qw(Str HashRef ArrayRef);
 use Color::Palette::Types qw(RecursiveColorDict ColorDict Color);

@@ -1,6 +1,7 @@
 package Color::Palette::Types;
 use strict;
 use warnings;
+# ABSTRACT: type constraints for use with Color::Palette
 
 use Color::Palette::Color;
 

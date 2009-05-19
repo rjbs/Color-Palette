@@ -1,5 +1,6 @@
-package Color::Palette::Application;
+package Color::Palette::Schema;
 use Moose;
+# ABSTRACT: requirements for a palette
 
 use Color::Palette;
 
