@@ -62,8 +62,9 @@ my $listbox_palette = Color::Palette->new({ _colors => \%listbox_colors });
 
 my $output = {};
 for my $name ($pobox_palette->color_names) {
-  my $color = $pobox_palette->_optimized_colors->{ $name };
-  $output   = $color->hex_triple;
+  # my $color = $pobox_palette->_optimized_colors->{ $name };
+  my $color = $pobox_palette->_colors->{ $name };
+  $output->{$name} = ref $color ? $color->hex_triple : $color;
 }
 
 diag(JSON->new->encode($output));
