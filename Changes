@@ -1,0 +1,7 @@
+Revision history for {{$dist->name}}
+
+{{$NEXT}}
+          replace Color::Palette::Color with Graphics::Color
+
+
+0.091392  2009-05-19
