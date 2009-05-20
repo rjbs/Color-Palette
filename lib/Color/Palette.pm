@@ -19,7 +19,7 @@ For example, a color palette might contain the following data:
   sidebarText       => 'highlights'
   sidebarBoder      => 'sidebarText'
 
-Colors can be defined by a color specifier (a L<Color::Palette::Color> object,
+Colors can be defined by a color specifier (a L<Graphics::Color> object,
 a CSS-style hex triple, or an arrayref of RGB values) or by a name of another
 color that appears in the palette.  If colors are defined in terms of another
 color that doesn't exist, an exception will be raised.
@@ -132,13 +132,14 @@ sub color_names {
   keys %{ $self->colors };
 }
 
-=method hex_triples
+=method as_css_hash
 
-  my $triple_for = $palette->hex_triples;
+  my $triple_for = $palette->as_css_hash
 
 This method returns a hashref.  Every color name known to the palette has an
-entry, and the value is the hex triple for the resolved color.  For example,
-the output for the color scheme in the L</DESCRIPTION> section would be:
+entry, and the value is the CSS-safe hex string for the resolved color.  For
+example, the output for the color scheme in the L</DESCRIPTION> section would
+be:
 
   {
     highlights => '#f0f000',
@@ -150,10 +151,10 @@ the output for the color scheme in the L</DESCRIPTION> section would be:
 
 =cut
 
-sub hex_triples {
+sub as_css_hash {
   my ($self) = @_;
   my $output = {};
-  $output->{$_} = '#' . $self->color($_)->as_hex_string for $self->color_names;
+  $output->{$_} = $self->color($_)->as_css_hex for $self->color_names;
   return $output;
 }
 
