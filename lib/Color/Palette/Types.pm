@@ -11,7 +11,7 @@ I'm not yet sure how best to document a type library.
 
 The following types are defined:
 
-  Color     - a Color::Palette::Color object
+  Color     - a Graphics::Color object
   Palette   - a Color::Palette::Color object
   ColorName - a valid color name: /\A[a-z][-a-z0-9]*\z/i
 
@@ -27,7 +27,7 @@ coerce, too.
 
 =cut
 
-use Color::Palette::Color;
+use Graphics::Color::RGB;
 
 use List::MoreUtils qw(all);
 
@@ -43,7 +43,7 @@ use MooseX::Types -declare => [ qw(
 
 use MooseX::Types::Moose qw(Str Int ArrayRef HashRef);
 
-class_type Color,   { class => 'Color::Palette::Color' };
+class_type Color,   { class => 'Graphics::Color::RGB' };
 class_type Palette, { class => 'Color::Palette' };
 
 subtype ColorName, as Str, where { /\A[a-z][-a-z0-9]*\z/i };
@@ -55,20 +55,20 @@ subtype Byte, as Int, where { $_ >= 0 and $_ <= 255 };
 subtype ArrayRGB, as ArrayRef[Byte], where { @$_ == 3 };
 
 coerce Color, from ArrayRGB, via {
-  Color::Palette::Color->new({
-    red   => $_->[0],
-    green => $_->[1],
-    blue  => $_->[2],
+  Graphics::Color::RGB->new({
+    red   => $_->[0] / 256,
+    green => $_->[1] / 256,
+    blue  => $_->[2] / 256,
   })
 };
 
 coerce Color, from HexColorStr, via {
   my $width = 2 / ((length($_)-1) / 3); # 3 -> 2; 6 -> 1;
   my @rgb = /\A#?([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})\z/;
-  Color::Palette::Color->new({
-    red   => hex($rgb[1] x $width),
-    green => hex($rgb[2] x $width),
-    blue  => hex($rgb[3] x $width),
+  Graphics::Color::RGB->new({
+    red   => hex($rgb[1] x $width) / 256,
+    green => hex($rgb[2] x $width) / 256,
+    blue  => hex($rgb[3] x $width) / 256,
   });
 };
 

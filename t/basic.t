@@ -65,7 +65,7 @@ my $opto_pobox = $pobox_palette->optimize_for($pal_schema);
 
 isa_ok(
   $pobox_palette->color('poboxBlue'),
-  'Color::Palette::Color',
+  'Graphics::Color',
 );
 
 eval { $opto_pobox->color('poboxBlue') };
@@ -73,12 +73,12 @@ like($@, qr/no color named poboxBlue/, "poboxBlue is removed by optimize");
 
 isa_ok(
   $opto_pobox->color('highlight'),
-  'Color::Palette::Color',
+  'Graphics::Color',
 );
 
 is(
-  $pobox_palette->color('poboxBlue')->hex_triple,
-  $opto_pobox->color('highlight')->hex_triple,
+  $pobox_palette->color('poboxBlue')->as_hex_string,
+  $opto_pobox->color('highlight')->as_hex_string,
   "the optimized highlight value is really poboxBlue",
 );
 

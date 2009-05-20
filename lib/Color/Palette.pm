@@ -153,7 +153,7 @@ the output for the color scheme in the L</DESCRIPTION> section would be:
 sub hex_triples {
   my ($self) = @_;
   my $output = {};
-  $output->{ $_ } = $self->color($_)->hex_triple for $self->color_names;
+  $output->{$_} = '#' . $self->color($_)->as_hex_string for $self->color_names;
   return $output;
 }
 
