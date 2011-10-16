@@ -41,10 +41,11 @@ consult the C<L</color>> method.
 =cut
 
 has colors => (
-  is   => 'ro',
+  is   => 'bare',
   isa  => RecursiveColorDict,
   coerce   => 1,
   required => 1,
+  reader   => '_colors',
 );
 
 =begin :private
@@ -69,7 +70,7 @@ has _resolved_colors => (
 sub _build_resolved_colors {
   my ($self) = @_;
 
-  my $input = $self->colors;
+  my $input = $self->_colors;
 
   my %output;
 
@@ -129,7 +130,7 @@ This method returns a list of all color names the object knows about.
 
 sub color_names {
   my ($self) = @_;
-  keys %{ $self->colors };
+  keys %{ $self->_colors };
 }
 
 =method as_css_hash

@@ -1,7 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-
+          privatize the ->colors method, which did not belong public
 
 0.091400  2009-05-20
           replace Color::Palette::Color with Graphics::Color
