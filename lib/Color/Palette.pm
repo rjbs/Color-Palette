@@ -62,9 +62,15 @@ has _resolved_colors => (
   is   => 'ro',
   isa  => ColorDict,
   lazy => 1,
+  traits   => [ 'Hash' ],
   coerce   => 1,
   required => 1,
   builder  => '_build_resolved_colors',
+  handles  => {
+    has_color   => 'exists',
+    _get_color  => 'get',
+    color_names => 'keys',
+  },
 );
 
 sub _build_resolved_colors {
@@ -114,8 +120,7 @@ This method will return the Color object to be used for the given name.
 
 sub color {
   my ($self, $name) = @_;
-  confess("no color named $name")
-    unless my $color = $self->_resolved_colors->{ $name };
+  confess("no color named $name") unless my $color = $self->_get_color($name);
 
   return $color;
 }
@@ -125,13 +130,6 @@ sub color {
   my @names = $palette->color_names;
 
 This method returns a list of all color names the object knows about.
-
-=cut
-
-sub color_names {
-  my ($self) = @_;
-  keys %{ $self->_colors };
-}
 
 =method as_css_hash
 
