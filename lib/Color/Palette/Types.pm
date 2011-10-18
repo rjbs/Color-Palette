@@ -56,19 +56,22 @@ subtype ArrayRGB, as ArrayRef[Byte], where { @$_ == 3 };
 
 coerce Color, from ArrayRGB, via {
   Graphics::Color::RGB->new({
-    red   => $_->[0] / 256,
-    green => $_->[1] / 256,
-    blue  => $_->[2] / 256,
+    red   => $_->[0] / 255,
+    green => $_->[1] / 255,
+    blue  => $_->[2] / 255,
   })
 };
 
 coerce Color, from HexColorStr, via {
-  my $width = 2 / ((length($_)-1) / 3); # 3 -> 2; 6 -> 1;
-  my @rgb = /\A#?([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})\z/;
+  my $copy = $_;
+  $copy =~ s/\A#//;
+  my $width = length $copy == 3 ? 2 : 1;
+
+  my @rgb = $copy =~ /\A([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})\z/;
   Graphics::Color::RGB->new({
-    red   => hex($rgb[1] x $width) / 256,
-    green => hex($rgb[2] x $width) / 256,
-    blue  => hex($rgb[3] x $width) / 256,
+    red   => hex($rgb[0] x $width) / 255,
+    green => hex($rgb[1] x $width) / 255,
+    blue  => hex($rgb[2] x $width) / 255,
   });
 };
 
