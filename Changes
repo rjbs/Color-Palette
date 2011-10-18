@@ -3,6 +3,8 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
           privatize the ->colors method, which did not belong public
 
+          fix several critical bugs in the hex code reader and generator
+
 0.091400  2009-05-20
           replace Color::Palette::Color with Graphics::Color
 
