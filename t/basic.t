@@ -72,6 +72,14 @@ isa_ok(
 eval { $opto_pobox->color('poboxBlue') };
 like($@, qr/no color named poboxBlue/, "poboxBlue is removed by optimize");
 
+{
+  my $strict_hash = $opto_pobox->as_strict_css_hash;
+  is($strict_hash->{background}, '#eeeeee', "strict hash can give us bg color");
+
+  eval { $strict_hash->{zorch} };
+  like($@, qr/no entry in palette/, "...but not a color that didn't exist");
+}
+
 isa_ok(
   $opto_pobox->color('highlight'),
   'Graphics::Color',
@@ -88,9 +96,12 @@ my @opto_names = $opto_pobox->color_names;
 is(@orig_names, 13, "we defined 13 colors in the pobox palette");
 is(@opto_names,  7, "...but we strip down to 7 when optimizing");
 
-for my $hex (qw(d33 dd3333 #d33 #dd3333)) {
-  my $color = to_Color($hex);
-  is($color->as_css_hex, '#dd3333', "$hex -> #dd3333");
+{
+  no warnings 'qw';
+  for my $hex (qw(d33 dd3333 #d33 #dd3333)) {
+    my $color = to_Color($hex);
+    is($color->as_css_hex, '#dd3333', "$hex -> #dd3333");
+  }
 }
 
 done_testing;

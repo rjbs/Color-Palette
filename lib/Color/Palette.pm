@@ -157,6 +157,24 @@ sub as_css_hash {
   return $output;
 }
 
+=method as_strict_css_hash
+
+  my $hashref = $palette->as_strict_css_hash;
+
+This method behaves just like C<L</as_css_hash>>, but the returned hashref is
+tied so that trying to read values for keys that do not exist is fatal.  The
+hash may also become read-only in the future.
+
+=cut
+
+sub as_strict_css_hash {
+  my ($self) = @_;
+  my $hashref = $self->as_css_hash;
+  tie my %hash, 'Color::Palette::TiedStrictHash';
+  %hash = %$hashref;
+  return \%hash;
+}
+
 =method optimize_for
 
   my $optimized_palette = $palette->optimize_for($schema);
@@ -180,6 +198,19 @@ sub optimize_for {
   (ref $self)->new({
     colors => \%new_palette,
   });
+}
+
+{
+  package
+    Color::Palette::TiedStrictHash;
+  use Tie::Hash;
+  BEGIN { our @ISA = qw(Tie::StdHash) }
+  sub FETCH {
+    my ($self, $key) = @_;
+    die "no entry in palette hash for key $key"
+      unless $self->EXISTS($key);
+    return $self->SUPER::FETCH($key);
+  }
 }
 
 1;

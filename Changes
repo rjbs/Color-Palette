@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+          add as_strict_css_hash method
 
 0.100000  2011-10-18 13:18:14 America/New_York
           privatize the ->colors method, which did not belong public
