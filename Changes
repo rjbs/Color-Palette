@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.100001  2011-12-19 11:49:30 America/New_York
           add as_strict_css_hash method
 
 0.100000  2011-10-18 13:18:14 America/New_York
