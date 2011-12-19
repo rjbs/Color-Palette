@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.100002  2011-12-19 16:41:42 America/New_York
           optimize_for sounds like a mutator; rename to optimized_for with an
           alias (for now)
 
