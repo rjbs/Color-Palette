@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+          optimize_for sounds like a mutator; rename to optimized_for with an
+          alias (for now)
 
 0.100001  2011-12-19 11:49:30 America/New_York
           add as_strict_css_hash method

@@ -62,7 +62,7 @@ my $listbox_palette = Color::Palette->new({
   },
 });
 
-my $opto_pobox = $pobox_palette->optimize_for($pal_schema);
+my $opto_pobox = $pobox_palette->optimized_for($pal_schema);
 
 isa_ok(
   $pobox_palette->color('poboxBlue'),
@@ -76,7 +76,7 @@ like($@, qr/no color named poboxBlue/, "poboxBlue is removed by optimize");
   my $strict_hash = $opto_pobox->as_strict_css_hash;
   is($strict_hash->{background}, '#eeeeee', "strict hash can give us bg color");
 
-  eval { $strict_hash->{zorch} };
+  eval { my $x = $strict_hash->{zorch} };
   like($@, qr/no entry in palette/, "...but not a color that didn't exist");
 }
 

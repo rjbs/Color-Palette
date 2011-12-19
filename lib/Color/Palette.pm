@@ -30,7 +30,7 @@ L<Color::Palette::Schema> objects.
 
 A palette can be checked against a schema with the schema's C<check> method, or
 may be reduced to the minimal set of colors needed to satisfy the schema with
-the palette's C<optimize_for> method.
+the palette's C<optimized_for> method.
 
 =attr colors
 
@@ -175,17 +175,25 @@ sub as_strict_css_hash {
   return \%hash;
 }
 
-=method optimize_for
+=method optimized_for
 
-  my $optimized_palette = $palette->optimize_for($schema);
+  my $optimized_palette = $palette->optimized_for($schema);
 
 This method returns a new palette containing only the colors needed to fulfill
 the requirements of the given schema.  This is useful for reducing a large
 palette to the small set that must be embedded in a document.
 
+C<optimize_for> redispatches to this method for historical reasons.
+
 =cut
 
 sub optimize_for {
+  my $self = shift;
+  # warn deprecated
+  $self->optimized_for(@_);
+}
+
+sub optimized_for {
   my ($self, $checker) = @_;
 
   my $required_colors = $checker->required_colors;
