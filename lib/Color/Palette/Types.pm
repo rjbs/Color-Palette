@@ -29,7 +29,7 @@ coerce, too.
 
 use Graphics::Color::RGB;
 
-use List::MoreUtils qw(all);
+use List::Util 1.33 qw(all);
 
 use MooseX::Types -declare => [ qw(
   Color Palette
