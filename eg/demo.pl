@@ -61,8 +61,8 @@ my $template = Color::Palette::Schema->new({
 my $opb_palette = $pb_palette->optimize_for($template);
 my $olb_palette = $lb_palette->optimize_for($template);
 
-my $pcs = JSON->new->encode($opb_palette->hex_triples);
-my $lcs = JSON->new->encode($olb_palette->hex_triples);
+my $pcs = JSON->new->encode($opb_palette->as_css_hash);
+my $lcs = JSON->new->encode($olb_palette->as_css_hash);
 
 my $HTML = <<"HTML";
 <html>
@@ -80,7 +80,7 @@ var palette = {
 function applyStyle(which) {
   var pal = palette[ which ];
   var rgb_str;
-  
+
   \$("body").css({ backgroundColor: pal.background });
 
   \$("h1").css({ color: pal.highlight });
